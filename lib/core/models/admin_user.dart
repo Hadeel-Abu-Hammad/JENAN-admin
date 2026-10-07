@@ -25,11 +25,11 @@ class AdminUser extends Equatable{
     final data = doc.data() as Map<String, dynamic>;
     return AdminUser(
       id: doc.id,
-      name: data['name'] as String? ?? '',
-      email: data['email'] as String? ?? '',
-      phoneNumber: data['phoneNumber'] as String? ?? '',
-      photo: data['photo'] as String? ?? '',
-      isActive: data['isActive'] as bool? ?? false,
+      name: data["name"] as String? ?? "مسؤول",
+      email: data["email"] as String? ?? "admin@jenan.com",
+      phoneNumber: data["phoneNumber"] as String? ?? "0000000000",
+      photo: data["photo"] as String? ?? "https://res.cloudinary.com/dsptbzrkd/image/upload/v1791315811/logo1_gbr53x.png",
+      isActive: data["isActive"] as bool? ?? false,
     );
   }
 

@@ -12,7 +12,7 @@ final class AuthInitial extends AuthState {
   const AuthInitial();
 }
 
-final class AuthCheckingSession extends AuthState { // التحقق من الجلسة السابقة
+final class AuthCheckingSession extends AuthState {
   const AuthCheckingSession();
 }
 

@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jenan_admin/core/models/admin_user.dart';
+import 'package:jenan_admin/core/utils/firebase_errors.dart';
 import 'package:jenan_admin/features/auth/data/repos/auth_repo.dart';
 import 'package:meta/meta.dart';
 part 'auth_event.dart';
@@ -31,10 +32,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onLogin(
-      AuthLoginEvent event,
-      Emitter<AuthState> emit
-      ) async{
+  Future<void> _onLogin(AuthLoginEvent event, Emitter<AuthState> emit) async{
     emit(AuthLoading());
     try {
       final admin = await _authRepo.login(
@@ -45,45 +43,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthFailure(e.message));
     }
     on FirebaseAuthException catch(e){
-      emit(AuthFailure(_mapFirebaseError(e.code)));
+      emit(AuthFailure(FirebaseErrors.firebaseErrorMap(e.code)));
     }
     catch(e){
       emit(AuthFailure("خطأ غير متوقع, الرجاء المحاولة مرة أخرى"));
     }
   }
 
-  Future<void> _onLogout(
-      AuthLogoutEvent event,
-      Emitter<AuthState> emit
-      ) async{
+  Future<void> _onLogout(AuthLogoutEvent event, Emitter<AuthState> emit) async{
     emit(AuthLoading());
     try{
       await _authRepo.logout();
       emit(AuthUnauthenticated());
     }catch(e){
       emit(AuthFailure("فشل تسجيل الخروج"));
-    }
-  }
-
-
-  String _mapFirebaseError(String code) {
-    switch (code) {
-      case 'user-not-found':
-        return 'لا يوجد حساب بهذا الإيميل';
-      case 'wrong-password':
-        return 'كلمة المرور غير صحيحة';
-      case 'invalid-email':
-        return 'صيغة الإيميل غير صحيحة';
-      case 'user-disabled':
-        return 'هذا الحساب معطّل';
-      case 'too-many-requests':
-        return 'محاولات كثيرة، حاول لاحقاً';
-      case 'network-request-failed':
-        return 'تحقق من اتصال الإنترنت';
-      case 'invalid-credential':
-        return 'الإيميل أو كلمة المرور غير صحيحة';
-      default:
-        return 'حدث خطأ في تسجيل الدخول، حاول مرة أخرى';
     }
   }
 
